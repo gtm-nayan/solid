@@ -13,6 +13,7 @@ import {
 } from "../reactive/signal.js";
 import { HydrationContext, setHydrateContext, sharedConfig } from "./hydration.js";
 import type { JSX } from "../jsx.js";
+import { encode } from "dom-expressions/src/encoder.js";
 
 type SuspenseListContextType = {
   register: (inFallback: Accessor<boolean>) => Accessor<SuspenseListRegisteredState>;
@@ -142,7 +143,7 @@ export function Suspense(props: { fallback?: JSX.Element; children: JSX.Element 
     },
     owner = getOwner();
   if (sharedConfig.context && sharedConfig.load) {
-    const key = sharedConfig.context.id + sharedConfig.context.count;
+    const key = sharedConfig.context.id + encode(sharedConfig.context.count);
     let ref = sharedConfig.load(key);
     if (ref && (typeof ref !== "object" || ref.status !== "success")) p = ref;
     if (p && p !== "$$f") {
@@ -195,7 +196,7 @@ export function Suspense(props: { fallback?: JSX.Element; children: JSX.Element 
           return createRoot(disposer => {
             dispose = disposer;
             if (ctx) {
-              setHydrateContext({ id: ctx.id + "f", count: 0 });
+              setHydrateContext({ id: ctx.id + "-", count: 0 });
               ctx = undefined;
             }
             return props.fallback;

@@ -27,6 +27,7 @@ import { requestCallback, Task } from "./scheduler.js";
 import { setHydrateContext, sharedConfig } from "../render/hydration.js";
 import type { JSX } from "../jsx.js";
 import type { FlowComponent, FlowProps } from "../render/index.js";
+import { encode } from "dom-expressions/src/encoder.js";
 
 export const equalFn = <T>(a: T, b: T) => a === b;
 export const $PROXY = Symbol("solid-proxy");
@@ -617,7 +618,7 @@ export function createResource<T, S, R>(
     );
 
   if (sharedConfig.context) {
-    id = `${sharedConfig.context.id}${sharedConfig.context.count++}`;
+    id = `${sharedConfig.context.id}${encode(sharedConfig.context.count++)}`;
     let v;
     if (options.ssrLoadFrom === "initial") initP = options.initialValue as T;
     else if (sharedConfig.load && (v = sharedConfig.load(id))) initP = v;

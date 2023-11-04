@@ -12,6 +12,7 @@ import {
 import { mapArray, indexArray } from "../reactive/array.js";
 import { sharedConfig } from "./hydration.js";
 import type { JSX } from "../jsx.js";
+import { encode } from "dom-expressions/src/encoder.js";
 
 const narrowedError = (name: string) =>
   "_SOLID_DEV_"
@@ -258,7 +259,7 @@ export function ErrorBoundary(props: {
 }): JSX.Element {
   let err;
   if (sharedConfig!.context && sharedConfig!.load)
-    err = sharedConfig.load(sharedConfig.context.id + sharedConfig.context.count);
+    err = sharedConfig.load(sharedConfig.context.id + encode(sharedConfig.context.count));
   const [errored, setErrored] = createSignal<any>(
     err,
     "_SOLID_DEV_" ? { name: "errored" } : undefined

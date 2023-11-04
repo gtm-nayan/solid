@@ -13,6 +13,7 @@ import {
   createOwner
 } from "./reactive.js";
 import type { JSX } from "../jsx.js";
+import { encode } from "dom-expressions/src/encoder.js";
 
 export type Component<P = {}> = (props: P) => JSX.Element;
 export type VoidProps<P = {}> = P & { children?: never };
@@ -56,7 +57,7 @@ function nextHydrateContext(): HydrationContext | undefined {
   return sharedConfig.context
     ? {
         ...sharedConfig.context,
-        id: `${sharedConfig.context.id}${sharedConfig.context.count++}-`,
+        id: `${sharedConfig.context.id}${encode(sharedConfig.context.count++)}`,
         count: 0
       }
     : undefined;
@@ -65,7 +66,7 @@ function nextHydrateContext(): HydrationContext | undefined {
 export function createUniqueId(): string {
   const ctx = sharedConfig.context;
   if (!ctx) throw new Error(`createUniqueId cannot be used under non-hydrating context`);
-  return `${ctx.id}${ctx.count++}`;
+  return `${ctx.id}${encode(ctx.count++)}`;
 }
 
 export function createComponent<T>(Comp: (props: T) => JSX.Element, props: T): JSX.Element {
@@ -262,7 +263,7 @@ export function ErrorBoundary(props: {
     clean: any,
     sync = true;
   const ctx = sharedConfig.context!;
-  const id = ctx.id + ctx.count;
+  const id = ctx.id + encode(ctx.count);
   function displayFallback() {
     cleanNode(clean);
     ctx.serialize(id, error);
@@ -364,7 +365,7 @@ export function createResource<T, S>(
     source = true as ResourceSource<S>;
   }
   const contexts = new Set<SuspenseContextType>();
-  const id = sharedConfig.context!.id + sharedConfig.context!.count++;
+  const id = sharedConfig.context!.id + encode(sharedConfig.context!.count++);
   let resource: { ref?: any; data?: T } = {};
   let value = options.storage ? options.storage(options.initialValue)[0]() : options.initialValue;
   let p: Promise<T> | T | null;
@@ -557,7 +558,7 @@ export function SuspenseList(props: {
 export function Suspense(props: { fallback?: string; children: string }) {
   let done: undefined | ((html?: string, error?: any) => boolean);
   const ctx = sharedConfig.context!;
-  const id = ctx.id + ctx.count;
+  const id = ctx.id + encode(ctx.count);
   const o = createOwner();
   const value: SuspenseContextType =
     ctx.suspense[id] ||
@@ -602,14 +603,14 @@ export function Suspense(props: { fallback?: string; children: string }) {
   done = ctx.async ? ctx.registerFragment(id) : undefined;
   return catchError(() => {
     if (ctx.async) {
-      setHydrateContext({ ...ctx, count: 0, id: ctx.id + "0-f", noHydrate: true });
+      setHydrateContext({ ...ctx, count: 0, id: ctx.id + "e-", noHydrate: true });
       const res = {
         t: `<template id="pl-${id}"></template>${resolveSSRNode(props.fallback)}<!--pl-${id}-->`
       };
       setHydrateContext(ctx);
       return res;
     }
-    setHydrateContext({ ...ctx, count: 0, id: ctx.id + "0-f" });
+    setHydrateContext({ ...ctx, count: 0, id: ctx.id + "e-" });
     ctx.serialize(id, "$$f");
     return props.fallback;
   }, suspenseError);

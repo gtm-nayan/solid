@@ -35,6 +35,7 @@
     "@types/node": "^18.11.19",
     "@vitest/coverage-c8": "^0.29.7",
     "babel-plugin-jsx-dom-expressions": "^0.37.8",
+    "babel-plugin-transform-rename-import": "^2.3.0",
     "coveralls": "^3.1.1",
     "csstype": "^3.1.0",
     "dom-expressions": "0.37.8",
@@ -62,7 +63,9 @@
   },
   "pnpm": {
     "overrides": {
-      "babel-preset-solid": "workspace:*"
+      "babel-preset-solid": "workspace:*",
+      "babel-plugin-dom-expressions-jsx": "link:../dom-expressions/packages/babel-plugin-dom-expressions-jsx",
+      "dom-expressions": "link:../dom-expressions/packages/dom-expressions"
     }
   },
   "engines": {

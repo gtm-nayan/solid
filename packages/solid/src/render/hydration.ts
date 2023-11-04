@@ -1,3 +1,4 @@
+import { encode } from "dom-expressions/src/encoder.js";
 import { Computation } from "../reactive/signal.js";
 
 export type HydrationContext = { id: string; count: number };
@@ -23,7 +24,7 @@ export function setHydrateContext(context?: HydrationContext): void {
 export function nextHydrateContext(): HydrationContext | undefined {
   return {
     ...sharedConfig.context,
-    id: `${sharedConfig.context!.id}${sharedConfig.context!.count++}-`,
+    id: `${sharedConfig.context!.id}${encode(sharedConfig.context!.count++)}`,
     count: 0
   };
 }
