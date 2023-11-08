@@ -473,7 +473,7 @@ export function lazy<T extends Component<any>>(
   const wrap: Component<ComponentProps<T>> & {
     preload?: () => Promise<{ default: T }>;
   } = props => {
-    const id = sharedConfig.context!.id.slice(0, -1);
+    const id = sharedConfig.context!.id;
     let ref = sharedConfig.context!.lazy[id];
     if (ref) p = ref;
     else load(id);
@@ -603,14 +603,14 @@ export function Suspense(props: { fallback?: string; children: string }) {
   done = ctx.async ? ctx.registerFragment(id) : undefined;
   return catchError(() => {
     if (ctx.async) {
-      setHydrateContext({ ...ctx, count: 0, id: ctx.id + "e-", noHydrate: true });
+      setHydrateContext({ ...ctx, count: 0, id: ctx.id + "e«", noHydrate: true });
       const res = {
         t: `<template id="pl-${id}"></template>${resolveSSRNode(props.fallback)}<!--pl-${id}-->`
       };
       setHydrateContext(ctx);
       return res;
     }
-    setHydrateContext({ ...ctx, count: 0, id: ctx.id + "e-" });
+    setHydrateContext({ ...ctx, count: 0, id: ctx.id + "e«" });
     ctx.serialize(id, "$$f");
     return props.fallback;
   }, suspenseError);

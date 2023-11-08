@@ -196,7 +196,7 @@ export function Suspense(props: { fallback?: JSX.Element; children: JSX.Element 
           return createRoot(disposer => {
             dispose = disposer;
             if (ctx) {
-              setHydrateContext({ id: ctx.id + "-", count: 0 });
+              setHydrateContext({ id: ctx.id + "«", count: 0 });
               ctx = undefined;
             }
             return props.fallback;
